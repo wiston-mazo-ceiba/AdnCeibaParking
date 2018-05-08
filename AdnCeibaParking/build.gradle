@@ -26,6 +26,14 @@ repositories {
 	jcenter()
 }
 
+jar{
+	manifest {
+		attributes  'Implementation-Title' : "AdnCeibaParking",
+					"Implementation-Version" : version
+	}
+
+}
+
 
 ext {
 	springCloudVersion = 'Finchley.RC1'
@@ -49,10 +57,10 @@ dependencies {
 
 test {
 	jacoco {
-		toolVersion= '0.8.1'
+		//toolVersion= '0.8.1'
 		append = false
-		html.enabled = true
-		xml.enabled = true
+		//html.enabled = true
+		//xml.enabled = true
 		destinationFile = file("jacoco/jacocoTest.exec")
 	}
 	reports.junitXml.destination =  file("jacoco/test-results")
