@@ -36,4 +36,26 @@ public class NotifyPersonServiceTest {
 		Assert.assertNotNull(message);
 		//System.out.println(message);
 	}
+
+	@Test
+	public void personNameTest() {
+		//Arrange
+		PersonTestDataBuilder personTestDataBuilder = new PersonTestDataBuilder().withName("Wiston");
+		Person person = personTestDataBuilder.build(); 
+		//Act
+		String Name = person.getName();
+		//Assert
+		Assert.assertEquals("Wiston", Name);
+	}
+
+	@Test
+	public void personLastNameTest() {
+		//Arrange
+		PersonTestDataBuilder personTestDataBuilder = new PersonTestDataBuilder().withLastName("Mazo");
+		Person person = personTestDataBuilder.build(); 
+		//Act
+		String Name = person.getLastName();
+		//Assert
+		Assert.assertEquals("Mazo", Name);
+	}
 }
