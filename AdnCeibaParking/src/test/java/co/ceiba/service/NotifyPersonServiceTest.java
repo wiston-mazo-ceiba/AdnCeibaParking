@@ -34,6 +34,6 @@ public class NotifyPersonServiceTest {
 		String message = notifyPersonService.notify(person);
 		//Assert
 		Assert.assertNotNull(message);
-		System.out.println(message);
+		//System.out.println(message);
 	}
 }
