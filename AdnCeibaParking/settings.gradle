@@ -1,1 +1,3 @@
 rootProject.name = 'AdnCeibaParking'
+spring.thymeleaf.mode=LEGACYHTML5
+spring.thymeleaf.cache=false
