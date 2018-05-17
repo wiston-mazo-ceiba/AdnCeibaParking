@@ -14,7 +14,7 @@ import co.ceiba.testdatabuilder.VehicleTestDataBuilder;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+//@SpringBootTest
 public class VehicleTest {
 	
 	@Before

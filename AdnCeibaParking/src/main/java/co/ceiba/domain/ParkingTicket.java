@@ -11,6 +11,10 @@ public class ParkingTicket {
 	private LocalDateTime checkOutDate;
 	private BigDecimal serviceCost;
 
+	public ParkingTicket() {
+		super();
+	}
+
 	public String getTicketNumber() {
 		return ticketNumber;
 	}

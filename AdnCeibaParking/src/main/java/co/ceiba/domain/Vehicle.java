@@ -11,7 +11,7 @@ public class Vehicle {
 
 	public Vehicle(String licencePlate, int cylinderCapacity, VehicleType type) {
 		super();
-		licencePlate = licencePlate.toUpperCase();
+		this.licencePlate = licencePlate.toUpperCase();
 		this.cylinderCapacity = cylinderCapacity;
 		this.type = type;
 	}
