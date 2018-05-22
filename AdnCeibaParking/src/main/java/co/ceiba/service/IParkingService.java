@@ -42,9 +42,6 @@ public interface IParkingService {
 	List<Vehicle> findAllVehicles();
 
 	ParkingTicket findByLicencePlateAndCheckOutDateIsNull(String licencePlate);
-	/*public List<ParkingTicket> findByLicencePlateAndDay(String licencePlate,LocalDateTime dateOfCheckIn) {
-		return vehicleAdapter.findByLicencePlateAndDay(licencePlate, dateOfCheckIn);
-	}*/
 
 	ParkingTicket findByTicketNumber(String ticketNumber);
 

@@ -37,8 +37,6 @@ public class VehicleServiceTest {
 	public void Preparacion() {
 		this.simuladorAdapter = Mockito.mock(ParkingAdapter.class);
 		this.parkingService = new ParkingService(simuladorAdapter);
-		// this.parkingLot = Mockito.mock(ParkingService.class);;
-		// Mockito.when(parkingLot.getCount()).thenReturn(1);
 	}
 
 	public VehicleServiceTest() {
@@ -1052,7 +1050,6 @@ public class VehicleServiceTest {
 			// assert
 			assertTrue(e.getMessage().equals(SystemMessages.PARKING_EXCEPTION_ALREADY_USED_PARKING_TICKET_NUMBER.getText()));
 		}
-		
 	}
 
 }

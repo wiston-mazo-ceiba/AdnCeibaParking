@@ -83,5 +83,4 @@ public class VehicleTest {
 		//Assert
 		Assert.assertEquals("Motorcycle", enumValue);
 	}
-	//Mockito.when(emailService.sendMail(Mockito.anyString())).thenReturn("este es un mensaje simulado"); 
 }

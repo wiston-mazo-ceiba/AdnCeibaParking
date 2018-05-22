@@ -37,16 +37,6 @@ public interface IParkingAdapter {
 	ParkingTicket findByTicketNumber(String ticketNumber);
 
 	ParkingTicket findByLicencePlateAndCheckOutDateIsNull(String licencePlate);
-	/*	
-		public List<ParkingTicket> findByLicencePlateAndDay(String licencePlate,LocalDateTime dateOfCheckIn) {
-			List<ParkingTicket> parkingTicketsCollection = new ArrayList<>();
-			Iterable<ParkingTicketEntity> findAllResult =   parkingTicketRepository.findByLicencePlateAndDay(licencePlate,dateOfCheckIn);
-			for (ParkingTicketEntity parkingTicketEntity : findAllResult) {
-				parkingTicketsCollection.add(this.toDomain(parkingTicketEntity));
-			}
-			return parkingTicketsCollection;
-		}	
-		*/
 
 	List<ParkingTicket> findByLicencePlate(String licencePlate);
 

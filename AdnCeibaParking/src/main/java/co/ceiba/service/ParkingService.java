@@ -236,8 +236,4 @@ public class ParkingService implements IParkingService {
 	public List<ParkingTicket> findActiveByVehicleType(VehicleType  vehicleType){
 		return vehicleAdapter.findActiveByVehicleType(vehicleType);
 	}
-	
-	/*public List<ParkingTicket> findByLicencePlateAndDay(String licencePlate,LocalDateTime dateOfCheckIn) {
-		return vehicleAdapter.findByLicencePlateAndDay(licencePlate, dateOfCheckIn);
-	}*/
 }
