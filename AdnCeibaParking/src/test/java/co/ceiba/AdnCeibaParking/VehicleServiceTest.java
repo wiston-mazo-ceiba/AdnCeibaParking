@@ -10,14 +10,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import co.ceiba.adapter.VehicleAdapter;
+import co.ceiba.adapter.IParkingAdapter;
+import co.ceiba.adapter.ParkingAdapter;
 import co.ceiba.domain.ParkingTicket;
 import co.ceiba.domain.Vehicle;
 import co.ceiba.domain.VehicleType;
 import co.ceiba.exceptions.ParkingException;
+import co.ceiba.service.IParkingService;
 import co.ceiba.service.ParkingService;
 import co.ceiba.testdatabuilder.ParkingTicketTestDataBuilder;
 import co.ceiba.testdatabuilder.TestingListBuilder;
@@ -27,13 +30,14 @@ import co.ceiba.util.SystemMessages;
 @RunWith(SpringRunner.class)
 // @SpringBootTest
 public class VehicleServiceTest {
-	private ParkingService parkingService;
-	private VehicleAdapter simuladorAdapter;
+	
+	private IParkingService parkingService;
+	private IParkingAdapter simuladorAdapter;
 	private TestingListBuilder testingListBuilder;
 
 	@Before
 	public void Preparacion() {
-		this.simuladorAdapter = Mockito.mock(VehicleAdapter.class);
+		this.simuladorAdapter = Mockito.mock(ParkingAdapter.class);
 		this.parkingService = new ParkingService(simuladorAdapter);
 		// this.parkingLot = Mockito.mock(ParkingService.class);;
 		// Mockito.when(parkingLot.getCount()).thenReturn(1);
@@ -53,7 +57,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
 		LocalDateTime dateInsert = parkingTicket.getCheckInDate();
-		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
+		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());;
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
 		// act
@@ -67,6 +72,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -80,11 +86,13 @@ public class VehicleServiceTest {
 	 * ==================================Verificaciones de ingreso Motos =================================================
 	 *==================================================================================================================== 
 	 * */
+	@Test
 	public void IngresarMoto() {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.MOTORCYCLE).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
 		LocalDateTime dateInsert = parkingTicket.getCheckInDate();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -99,6 +107,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.MOTORCYCLE).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -117,6 +126,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(null).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
@@ -136,6 +146,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.BICYCLE).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -153,6 +164,7 @@ public class VehicleServiceTest {
 	public void CrearTicketSinVehiculo() {
 		// arrange
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(null).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -170,6 +182,7 @@ public class VehicleServiceTest {
 	@Test
 	public void HacerUnCheckInSinTicket() {
 		// arrange
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -192,6 +205,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(25));
@@ -210,6 +224,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(20));
@@ -230,6 +245,7 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
 		LocalDateTime dateInsert = parkingTicket.getCheckInDate();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(19));
@@ -248,6 +264,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.MOTORCYCLE).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(13));
@@ -266,6 +283,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.MOTORCYCLE).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(10));
@@ -286,6 +304,7 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.MOTORCYCLE).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
 		LocalDateTime dateInsert = parkingTicket.getCheckInDate();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(9));
@@ -305,6 +324,7 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withLicencePlate("ASD987").build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
 		LocalDateTime dateInsert = parkingTicket.getCheckInDate();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(9));
@@ -320,6 +340,7 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withLicencePlate("ASD987").build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
 		LocalDateTime dateInsert = parkingTicket.getCheckInDate();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(9));
@@ -334,6 +355,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withLicencePlate("ASD987").build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(9));
@@ -352,6 +374,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withLicencePlate("ASD987").build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(9));
@@ -370,6 +393,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withLicencePlate("ASD987").build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(9));
@@ -388,6 +412,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withLicencePlate("ASD987").build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(9));
@@ -406,6 +431,7 @@ public class VehicleServiceTest {
 		// arrange
 		Vehicle vehiculo = new VehicleTestDataBuilder().withLicencePlate("ASD987").build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo).build();
+		Mockito.when(simuladorAdapter.findByLicencePlateAndCheckOutDateIsNull(Mockito.anyString())).thenReturn(null);
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsListWithElements(9));
@@ -654,6 +680,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(200).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 9, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+			.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -669,6 +697,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(200).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -685,6 +715,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(200).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -700,6 +732,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(200).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -715,6 +749,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(200).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -730,6 +766,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(200).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -747,6 +785,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(550).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 9, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -765,6 +805,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(550).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -781,6 +823,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(550).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -796,6 +840,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(550).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -811,6 +857,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(550).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -826,11 +874,30 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(550).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
 		// act
 		parkingTicket = parkingService.checkOut(parkingTicket, LocalDateTime.of(2018, 5, 5, 16, 00));
+		// assert
+		assertTrue(parkingTicket.getServiceCost().compareTo(valorEsperado) == 0);
+	}
+	@Test
+	public void cobrarUnDiezHorasMoto650CC() {
+		// arrange
+		BigDecimal valorEsperado = BigDecimal.valueOf(6000);
+		Vehicle vehiculo = new VehicleTestDataBuilder().withCylinderCapacity(650).withType(VehicleType.MOTORCYCLE).build();
+		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
+				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
+		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
+		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
+				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
+		// act
+		parkingTicket = parkingService.checkOut(parkingTicket, LocalDateTime.of(2018, 5, 4, 20, 00));
 		// assert
 		assertTrue(parkingTicket.getServiceCost().compareTo(valorEsperado) == 0);
 	}
@@ -847,6 +914,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 9, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -865,6 +934,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -881,6 +952,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -896,6 +969,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -911,6 +986,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -926,6 +1003,8 @@ public class VehicleServiceTest {
 		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
 		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
 				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
 		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
 		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
 				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
@@ -933,6 +1012,49 @@ public class VehicleServiceTest {
 		parkingTicket = parkingService.checkOut(parkingTicket, LocalDateTime.of(2018, 5, 5, 16, 00));
 		// assert
 		assertTrue(parkingTicket.getServiceCost().compareTo(valorEsperado) == 0);
+	}
+	@Test
+	public void cobrarUnDiaMasTresHorasCarro() {
+		// arrange
+		BigDecimal valorEsperado = BigDecimal.valueOf(11000);
+		Vehicle vehiculo = new VehicleTestDataBuilder().withType(VehicleType.CAR).build();
+		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().withParkedVehicle(vehiculo)
+				.withCheckInDate(LocalDateTime.of(2018, 5, 4, 10, 0)).build();
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(null).withTicketNumber("ticket1").build() );
+		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
+		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
+				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
+		// act
+		parkingTicket = parkingService.checkOut(parkingTicket, LocalDateTime.of(2018, 5, 5, 13, 00));
+		// assert
+		assertTrue(parkingTicket.getServiceCost().compareTo(valorEsperado) == 0);
+	}
+	/*====================================================================================================================
+	 * ================================== funcionalidad de tickets=============================================================
+	 *==================================================================================================================== 
+	 * */
+
+	@Test
+	public void salirDosVecesConElMismoTicket() {
+		// arrange
+		ParkingTicket parkingTicket = new ParkingTicketTestDataBuilder().build();
+		Mockito.when(simuladorAdapter.saveTicket(Mockito.any())).thenReturn(SystemMessages.SAVED_TICKET.getText());
+		
+		Mockito.when(simuladorAdapter.findByTicketNumber((Mockito.anyString())))
+		.thenReturn(new ParkingTicketTestDataBuilder().withCheckOutDate(LocalDateTime.of(2018, 5, 5, 13, 00)).withTicketNumber("ticket1").build() );
+		
+		Mockito.when(simuladorAdapter.findActiveByVehicleType(Mockito.any()))
+				.thenReturn(testingListBuilder.parkingTicketsEmptyList());
+		try {
+			// act
+			parkingService.checkOut(parkingTicket, LocalDateTime.of(2018, 5, 5, 13, 00));
+			fail("La prueba no se completó correctamente. No se realizó la verificación de la fecha de salida");
+		} catch (ParkingException e) {
+			// assert
+			assertTrue(e.getMessage().equals(SystemMessages.PARKING_EXCEPTION_ALREADY_USED_PARKING_TICKET_NUMBER.getText()));
+		}
+		
 	}
 
 }

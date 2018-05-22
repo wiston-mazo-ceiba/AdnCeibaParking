@@ -15,7 +15,10 @@ public enum SystemMessages {
 	PARKING_EXCEPTION_UNAUTHORIZED_VEHICLE("El ingreso de este vehículo no está autorizado"),
 	PARKING_EXCEPTION_FULL_MOTORCYCLE_PARKING_LOTS("No hay cupos para motos disponibles"),
 	PARKING_EXCEPTION_FULL_CAR_PARKING_LOTS("No hay cupos para motos disponibles"),
-	PARKING_EXCEPTION_ALREADY_REGISTERED_VEHICLE("El vehículo ya se encuentra registrado en el sistema");
+	PARKING_EXCEPTION_ALREADY_REGISTERED_VEHICLE("El vehículo ya se encuentra registrado en el sistema"),
+	PARKING_EXCEPTION_NO_PARKED_VEHICLE("El vehículo no se encuentra registrado en el sistema"),
+	PARKING_EXCEPTION_ALREADY_USED_PARKING_TICKET_NUMBER("No se puede registrar la salida mas de una vez para el mismo ticket"),
+	PARKING_EXCEPTION_NO_VALID_PARKING_TICKET_NUMBER("El número de ticket no es válido");
 	
 	//SystemMessages.TYPE.getText()
 	private String message;

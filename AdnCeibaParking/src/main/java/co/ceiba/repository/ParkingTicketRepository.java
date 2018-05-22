@@ -1,6 +1,5 @@
 package co.ceiba.repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 //import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import co.ceiba.domain.VehicleType;
@@ -16,16 +16,20 @@ import co.ceiba.entity.ParkingTicketEntity;
 
 @Repository("parkingTicketRepository")
 public interface ParkingTicketRepository extends CrudRepository<ParkingTicketEntity, Long> {
+
 	public ParkingTicketEntity findByTicketNumber(String ticketNumber);
-	
-	public List<ParkingTicketEntity> findByLicencePlateAndCheckOutDateIsNull(String licencePlate);
-	
+
+	@Query(value = "select p.* from parking_ticket p inner join vehicle v on p.parked_vehicle_vehicle_id = v.vehicle_id where v.licence_plate = :licencePlate and p.check_out_date IS NULL", nativeQuery = true)
+	public List<ParkingTicketEntity> findByLicencePlateAndCheckOutDateIsNull(
+			@Param("licencePlate") String licencePlate);
+
 	public List<ParkingTicketEntity> findByCheckOutDateIsNull();
-	
-	@Query("select p from parking_ticket p where p.licence_plate = ?1 and date(p.check_in_date) = date(?2)")
-	public List<ParkingTicketEntity> findByLicencePlateAndDay(String licencePlate,LocalDateTime dateOfCheckIn);
-	@Query("select p from parking_ticket p inner join vehicle v on p.parked_vehicle_vehicle_id ) v.vehicle_id where v.vehicle_type = ?1 and p.check_out_date is null")
-	public List<ParkingTicketEntity> findActiveByVehicleType(VehicleType vehicleType);
-	
-	public List<ParkingTicketEntity> findByLicencePlate(String licencePlate);
+
+	@Query(value = "select p.* from parking_ticket p inner join vehicle v on p.parked_vehicle_vehicle_id = v.vehicle_id where v.vehicle_type = :vehicleType and p.check_out_date IS NULL", nativeQuery = true)
+	public List<ParkingTicketEntity> findByVehicleTypeAndCheckOutDateIsNull(
+			@Param("vehicleType") VehicleType vehicleType);
+
+	@Query(value = "select p.* from parking_ticket p inner join vehicle v on p.parked_vehicle_vehicle_id = v.vehicle_id where v.licence_plate = ?1;", nativeQuery = true)
+	public List<ParkingTicketEntity> findTicketsByLicencePlate(String licencePlate);
+
 }

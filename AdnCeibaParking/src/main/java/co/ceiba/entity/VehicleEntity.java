@@ -16,6 +16,7 @@ public class VehicleEntity {
 		private int cylinderCapacity;
 	 	@Column(name="vehicle_type")
 		private VehicleType type;
+	 	
 		public Integer getId() {
 			return id;
 		}

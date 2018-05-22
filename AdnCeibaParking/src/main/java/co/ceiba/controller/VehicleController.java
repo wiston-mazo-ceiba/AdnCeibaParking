@@ -1,7 +1,11 @@
 package co.ceiba.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,16 +14,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import co.ceiba.domain.ParkingTicket;
 import co.ceiba.domain.Vehicle;
 import co.ceiba.domain.VehicleType;
 import co.ceiba.exceptions.ParkingException;
-import co.ceiba.service.ParkingService;
+import co.ceiba.service.IParkingService;
 import co.ceiba.util.SystemMessages;
 
 @RestController
 @RequestMapping(path="/api/vehicle")
 public class VehicleController {
-	ParkingService parkingService = new ParkingService();
+	@Autowired
+	public IParkingService parkingService;
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public boolean add(@RequestBody Vehicle vehicle) {
@@ -27,43 +33,24 @@ public class VehicleController {
 			throw new ParkingException(SystemMessages.PARKING_EXCEPTION_ALREADY_REGISTERED_VEHICLE.getText());
 		parkingService.checkIn(vehicle.getLicencePlate(), vehicle.getType(), vehicle.getCylinderCapacity());
 		return true;
-		/*
-		if(!watchman.vehicleTypeAllowed(vehicle.getType())) {
-			throw new ParkingLotException(TYPE_NOT_ALLOWED);
-		}
-		if(!watchman.vehicleDisponibility(vehicle.getType())) {
-			throw new ParkingLotException(NO_SPACE);
-		}
-		if(!watchman.plateValidToday(vehicle.getPlate())) {
-			throw new ParkingLotException(NOT_BUSINESS_DAY);
-		}
-		watchman.addVehicle(vehicle);
-		return true;
-		*/
 	}
-	
-	
-	
-	/*@PostMapping (path="/add")
-	public String addNewUser (@RequestParam String licencePlate, @RequestParam int cylinderCapacity
-			, @RequestParam String vehicleType) {
-		try {
 
-			VehicleEntity v = new VehicleEntity();
-			v.setCylinderCapacity(cylinderCapacity);
-			v.setLicencePlate(licencePlate);
-			v.setType(VehicleType.valueOf(VehicleType.class, vehicleType));
-			vehicleRepository.save(v);
-		} catch (Exception e) {
-			return "Not Saved";
-		}
-		return "Saved";
-	}*/
-	
-/*
- * @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
- */
-	@GetMapping(path="/all")
+	@GetMapping("/search/{placa}")
+	public List<Vehicle> findVehiclesByLicence(@PathVariable("placa") String licencePlate) {
+		List<Vehicle> vehicles = parkingService.findVehicleByLicencePlateContains(licencePlate);
+		if (vehicles == null)
+			vehicles = new ArrayList<>();
+		return vehicles;
+	}
+	@GetMapping("/find/{placa}")
+	public Vehicle searchVehicle2(@PathVariable("placa") String licencePlate) {
+		Vehicle vehicle = parkingService.findVehicleByLicencePlate(licencePlate);
+		if (vehicle == null)
+			vehicle = new Vehicle();
+		return vehicle;
+	}
+		
+	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	public @ResponseBody Iterable<Vehicle> getAllVehicles() {
 		return parkingService.findAllVehicles();
 	}

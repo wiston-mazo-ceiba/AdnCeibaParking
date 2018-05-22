@@ -68,7 +68,7 @@ public class VehicleTest {
 	@Test
 	public void getVehicleTypeTest() {
 		//Arrange
-		VehicleType vehicleType = VehicleType.MOTORCYCLE; 
+		VehicleType vehicleType = VehicleType.CAR; 
 		//Act
 		String enumValue = vehicleType.getVehicleType();
 		//Assert

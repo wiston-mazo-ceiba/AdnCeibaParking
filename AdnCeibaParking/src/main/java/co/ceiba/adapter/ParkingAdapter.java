@@ -1,6 +1,5 @@
 package co.ceiba.adapter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,41 +15,56 @@ import co.ceiba.repository.ParkingTicketRepository;
 import co.ceiba.repository.VehicleRepository;
 import co.ceiba.util.SystemMessages;
 
-@Service("vehicleAdapter")
-public class VehicleAdapter {
+@Service("parkingAdapter")
+public class ParkingAdapter implements IParkingAdapter {
 
 	@Autowired
-	private VehicleRepository vehicleRepository;
+	public VehicleRepository vehicleRepository;
 
 	@Autowired
-	private ParkingTicketRepository parkingTicketRepository;
-	private List<Vehicle> vehiclesCollection = new ArrayList<>();
-
-	public VehicleAdapter() {
+	public ParkingTicketRepository parkingTicketRepository;
+	
+	public ParkingAdapter() {
 		super();
 	}
-
+	/*====================================================================================================================
+	 * ================================== conversores de dominio a entidad =================================================
+	 *==================================================================================================================== 
+	 * */
+	@Override
 	public VehicleEntity toEntity(Vehicle toConvert) {
 		VehicleEntity vehicleEntity = vehicleRepository.findByLicencePlate(toConvert.getLicencePlate());
+		if(vehicleEntity == null)
+			vehicleEntity = new VehicleEntity();
 		vehicleEntity.setCylinderCapacity(toConvert.getCylinderCapacity());
 		vehicleEntity.setLicencePlate(toConvert.getLicencePlate());
 		vehicleEntity.setType(toConvert.getType());
 		return vehicleEntity;
 	}
-	public Vehicle toDomain(VehicleEntity toConvert) {
-		return new Vehicle(toConvert.getLicencePlate(), toConvert.getCylinderCapacity(), toConvert.getType());
-	}
-
+	@Override
 	public ParkingTicketEntity toEntity(ParkingTicket toConvert) {
 		ParkingTicketEntity parkingTicketEntity = parkingTicketRepository
 				.findByTicketNumber(toConvert.getTicketNumber());
+		if (parkingTicketEntity == null)
+			parkingTicketEntity = new ParkingTicketEntity();
 		parkingTicketEntity.setCheckInDate(toConvert.getCheckInDate());
 		parkingTicketEntity.setCheckOutDate(toConvert.getCheckOutDate());
 		parkingTicketEntity.setParkedVehicle(toEntity(toConvert.getParkedVehicle()));
 		parkingTicketEntity.setServiceCost(toConvert.getServiceCost());
 		return parkingTicketEntity;
 	}
+	
+	/*====================================================================================================================
+	 * ================================== conversores de entidad a dominio =================================================
+	 *==================================================================================================================== 
+	 * */
+	@Override
+	public Vehicle toDomain(VehicleEntity toConvert) {
+		return new Vehicle(toConvert.getLicencePlate(), toConvert.getCylinderCapacity(), toConvert.getType());
+	}
 
+
+	@Override
 	public ParkingTicket toDomain(ParkingTicketEntity toConvert) {
 		ParkingTicket parkingTicket = new ParkingTicket();
 
@@ -62,6 +76,7 @@ public class VehicleAdapter {
 
 		return parkingTicket;
 	}
+	@Override
 	public List<ParkingTicket> toDomainList(List<ParkingTicketEntity> toConvert) {
 		List<ParkingTicket> parkingTickets = new ArrayList<>();
 		for (ParkingTicketEntity parkingTicketEntity : toConvert) {
@@ -69,22 +84,12 @@ public class VehicleAdapter {
 		}
 		return parkingTickets;
 	}
-	public List<ParkingTicket> findAllParkingTickets(){
-		List<ParkingTicket>  parkingTicketsCollection = new ArrayList<>();
-		Iterable<ParkingTicketEntity> findAllResult = parkingTicketRepository.findAll();
-		for (ParkingTicketEntity parkingTicketEntity : findAllResult) {
-			parkingTicketsCollection.add(this.toDomain(parkingTicketEntity));
-		}
-		return parkingTicketsCollection;
-	}
-	public List<Vehicle> findAllVehicles(){
-		Iterable<VehicleEntity> findAllResult = vehicleRepository.findAll();
-		for (VehicleEntity vehicleEntity : findAllResult) {
-			vehiclesCollection.add(this.toDomain(vehicleEntity));
-		}
-		return vehiclesCollection;
-	}
-	
+
+	/*====================================================================================================================
+	 * ================================== Guardados en Repositorio =================================================
+	 *==================================================================================================================== 
+	 * */	
+	@Override
 	public String saveVehicle(Vehicle vehicleToSave) {
 		try {
 			vehicleRepository.save(this.toEntity(vehicleToSave));
@@ -94,14 +99,17 @@ public class VehicleAdapter {
 		}
 	}
 	
+	@Override
 	public String saveTicket(ParkingTicket parkingTicketToSave) {
 		try {
+			vehicleRepository.save(this.toEntity(parkingTicketToSave.getParkedVehicle()));
 			parkingTicketRepository.save(this.toEntity((parkingTicketToSave)));
 			return SystemMessages.SAVED_TICKET.getText();
 		} catch (Exception e) {
 			return SystemMessages.NOT_SAVED_TICKET.getText() +": {" + e.getMessage() + "}";
 		}
 	}
+	@Override
 	public String saveTickets(List<ParkingTicket> parkingTicketToSave) {
 		try {
 			List<ParkingTicketEntity> tickets = new ArrayList<>();
@@ -115,7 +123,31 @@ public class VehicleAdapter {
 			return SystemMessages.NOT_SAVED_TICKET.getText() +": {" + e.getMessage() + "}";
 		}
 	}
-
+	
+	/*====================================================================================================================
+	 * ================================== Consultas al Repositorio =================================================
+	 *==================================================================================================================== 
+	 * */
+	@Override
+	public List<ParkingTicket> findAllParkingTickets(){
+		List<ParkingTicket>  parkingTicketsCollection = new ArrayList<>();
+		Iterable<ParkingTicketEntity> findAllResult = parkingTicketRepository.findAll();
+		for (ParkingTicketEntity parkingTicketEntity : findAllResult) {
+			parkingTicketsCollection.add(this.toDomain(parkingTicketEntity));
+		}
+		return parkingTicketsCollection;
+	}
+	@Override
+	public List<Vehicle> findAllVehicles(){
+		Iterable<VehicleEntity> findAllResult = vehicleRepository.findAll();
+		List<Vehicle> vehiclesCollection = new ArrayList<>();
+		for (VehicleEntity vehicleEntity : findAllResult) {
+			vehiclesCollection.add(this.toDomain(vehicleEntity));
+		}
+		return vehiclesCollection;
+	}
+	
+	@Override
 	public List<ParkingTicket> findActiveParkingTickets(){
 		List<ParkingTicket> parkingTicketsCollection = new ArrayList<>();
 		Iterable<ParkingTicketEntity> findAllResult = parkingTicketRepository.findByCheckOutDateIsNull();
@@ -124,15 +156,17 @@ public class VehicleAdapter {
 		}
 		return parkingTicketsCollection;
 	}
+	@Override
 	public List<ParkingTicket> findActiveByVehicleType(VehicleType vehicleType){
 		List<ParkingTicket> parkingTicketsCollection = new ArrayList<>();
-		Iterable<ParkingTicketEntity> findAllResult = parkingTicketRepository.findActiveByVehicleType(vehicleType);
+		Iterable<ParkingTicketEntity> findAllResult = parkingTicketRepository.findByVehicleTypeAndCheckOutDateIsNull(vehicleType);
 		for (ParkingTicketEntity parkingTicketEntity : findAllResult) {
 			parkingTicketsCollection.add(this.toDomain(parkingTicketEntity));
 		}
 		return parkingTicketsCollection;
 	}
 	
+	@Override
 	public ParkingTicket findByTicketNumber(String ticketNumber) {
 		ParkingTicketEntity parkingTicketEntity =  parkingTicketRepository.findByTicketNumber(ticketNumber);
 		if(parkingTicketEntity == null)
@@ -140,29 +174,34 @@ public class VehicleAdapter {
 		return this.toDomain(parkingTicketEntity);
 	}
 	
+	@Override
 	public ParkingTicket findByLicencePlateAndCheckOutDateIsNull(String licencePlate) {
 		List<ParkingTicketEntity> parkingTicketEntity =  parkingTicketRepository.findByLicencePlateAndCheckOutDateIsNull(licencePlate);
 		if(parkingTicketEntity == null || parkingTicketEntity.isEmpty())
 			return null;
 		return this.toDomain(parkingTicketEntity.get(0));
 	}
-	
-	public List<ParkingTicket> findByLicencePlateAndDay(String licencePlate,LocalDateTime dateOfCheckIn) {
-		List<ParkingTicket> parkingTicketsCollection = new ArrayList<>();
-		Iterable<ParkingTicketEntity> findAllResult =   parkingTicketRepository.findByLicencePlateAndDay(licencePlate,dateOfCheckIn);
-		for (ParkingTicketEntity parkingTicketEntity : findAllResult) {
-			parkingTicketsCollection.add(this.toDomain(parkingTicketEntity));
-		}
-		return parkingTicketsCollection;
-	}	
-	
-
+	@Override
 	public List<ParkingTicket> findByLicencePlate(String licencePlate) {
 		List<ParkingTicket> parkingTicketsCollection = new ArrayList<>();
-		Iterable<ParkingTicketEntity> findAllResult =   parkingTicketRepository.findByLicencePlate(licencePlate);
+		Iterable<ParkingTicketEntity> findAllResult =   parkingTicketRepository.findTicketsByLicencePlate(licencePlate);
 		for (ParkingTicketEntity parkingTicketEntity : findAllResult) {
 			parkingTicketsCollection.add(this.toDomain(parkingTicketEntity));
 		}
 		return parkingTicketsCollection;
+	}
+	@Override
+	public List<Vehicle>findVehicleByLicencePlateContains(String licencePlate) {
+		List<Vehicle> vehiclesCollection = new ArrayList<>();
+		Iterable<VehicleEntity> findAllResult =   vehicleRepository.findByLicencePlateContains(licencePlate);
+		for (VehicleEntity vehicleEntity : findAllResult) {
+			vehiclesCollection.add(this.toDomain(vehicleEntity));
+		}
+		return vehiclesCollection;
+	}
+	@Override
+	public Vehicle findVehicleByLicencePlate(String licencePlate) {
+		vehicleRepository.findByLicencePlate(licencePlate);
+		return null;
 	}
 }

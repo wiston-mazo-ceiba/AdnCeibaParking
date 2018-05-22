@@ -7,7 +7,6 @@ public class ParkingTicket {
 	private String ticketNumber;
 	private Vehicle parkedVehicle;
 	private LocalDateTime checkInDate;
-	
 	private LocalDateTime checkOutDate;
 	private BigDecimal serviceCost;
 
