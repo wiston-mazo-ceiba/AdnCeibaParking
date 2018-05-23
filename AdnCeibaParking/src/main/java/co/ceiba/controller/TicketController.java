@@ -1,6 +1,7 @@
 package co.ceiba.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import co.ceiba.domain.VehicleType;
 import co.ceiba.service.IParkingService;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/api/ticket")
 public class TicketController {
 
